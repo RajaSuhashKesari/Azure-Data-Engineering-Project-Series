@@ -31,3 +31,17 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 ![image](https://github.com/user-attachments/assets/3fe1be1a-b058-4fc7-8482-c809ae91c2ab)
 ![image](https://github.com/user-attachments/assets/d0024c3a-66ce-4c5e-bcaa-9c628c7ce904)
 ## Project #3 :- Delete files older than 30 days
+## pipeline image
+![image](https://github.com/user-attachments/assets/084a3fb5-fb80-4408-9c54-f05343cf5bdd)
+## Dataset
+![image](https://github.com/user-attachments/assets/035b47c8-210b-4147-bdb8-1eb2c7974cba)
+## Files Present before execution of pipeline
+![image](https://github.com/user-attachments/assets/4c6e8e1f-d2fc-467d-a954-11aa22f7c0a2)
+## Execution of pipeline
+![image](https://github.com/user-attachments/assets/884e424d-e006-45cd-b3c7-3553a084deb8)
+## Files Deleted After Execution of the pipeline
+![image](https://github.com/user-attachments/assets/a0d3290c-2b1b-4f12-be57-03bbfe3b230e)
+## Log file to track which files are deleted.
+![image](https://github.com/user-attachments/assets/567b4f85-ea96-4258-8ffe-e34412f45ef1)
+
+
