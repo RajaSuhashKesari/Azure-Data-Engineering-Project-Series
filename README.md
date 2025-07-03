@@ -1,10 +1,8 @@
 # Azure-Data-Engineering-Project-Series
 ## 📌 Projects List --
-
     |  -> Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
-    |  -> Project #2 :- Copy Multiple CSV Files of Employees using Wildcard File Path Method  
+    |  -> Project #2 :- Copy Multiple CSV Files of Employees using Wildcard File Path Method
     |  -> Project #3 :- Delete Files Older Than 30 Days
-
 ## Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
