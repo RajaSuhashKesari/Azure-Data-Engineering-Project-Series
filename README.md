@@ -4,6 +4,7 @@
     |  -> Project #2 :- Copy Multiple CSV Files of Employees using Wildcard File Path Method
     |  -> Project #3 :- Delete Files Older Than 30 Days
     |  -> Project #4 :- Incremental File Copy Based on Last_Modified_Date.
+    |  -> Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
 ## Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
@@ -65,6 +66,28 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 ![image](https://github.com/user-attachments/assets/b45b8ea3-09a9-425c-bc2d-1906222309b5)
 ### After Execution
 ![image](https://github.com/user-attachments/assets/61df00a7-4e57-4f8b-9ded-90c99c733157)
+## Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
+## 5.1 pipeline : Dataflow Activity
+![image](https://github.com/user-attachments/assets/8d7dd342-c4d8-48c9-ad2f-3f9d48d1915c)
+## 5.2 Dataflow: DF Parse Fixed Length employee
+![image](https://github.com/user-attachments/assets/82c00388-e1a1-4b03-9177-fe73ae9abe31)
+## 5.3 Pipeline Execution 
+![image](https://github.com/user-attachments/assets/ad00ca2d-2401-4599-91df-ca2d07fe6742)
+## 5.4 Datasets
+### 5.4.1 Input Dataset :ds_input_fixedlength_txt
+![image](https://github.com/user-attachments/assets/c96cb2f5-85e3-459f-ac46-8cdba1752c2b)
+### 5.4.2 Output Dataset :ds_output_employee_csv
+![image](https://github.com/user-attachments/assets/c6e6a780-015c-4d53-9870-cc208c85990d)
+## 5.5 Final Outcomes
+### 5.5.1 fixed length text file
+![image](https://github.com/user-attachments/assets/48fb7024-eaca-46db-8ffb-d815ba5e3593)
+### 5.5.2 Parsed fixed length text file to CSV
+![image](https://github.com/user-attachments/assets/8e52208c-8cee-4a49-9ffc-abaa8d2de0f4)
+![image](https://github.com/user-attachments/assets/2ca00d53-9238-4e81-a584-5fd1cd0bfa1f)
+
+
+
+
 
 
 
