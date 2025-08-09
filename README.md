@@ -87,6 +87,33 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 ![image](https://github.com/user-attachments/assets/2ca00d53-9238-4e81-a584-5fd1cd0bfa1f)
 
 
+CREATE TABLE [pipeline_logs].[pipeline_executions](
+    data_factory_name varchar(50),
+	pipeline_name varchar(50),
+	trigger_name varchar(50),
+	run_id varchar(50),
+	trigger_time DateTime
+)
+
+CREATE PROCEDURE [pipeline_logs].[sp_insert_pipline_log](
+    @data_factory_name varchar(50),
+	@pipeline_name varchar(50),
+	@trigger_name varchar(50),
+	@run_id varchar(50),
+	@trigger_time DateTime
+)
+AS
+BEGIN
+    INSERT INTO [pipeline_logs].[pipeline_executions] VALUES(
+	    @data_factory_name,
+		@pipeline_name,
+		@trigger_name,
+		@run_id,
+		@trigger_time
+	)
+END
+
+
 
 
 
