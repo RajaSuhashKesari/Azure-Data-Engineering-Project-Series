@@ -85,34 +85,53 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 ### 5.5.2 Parsed fixed length text file to CSV
 ![image](https://github.com/user-attachments/assets/8e52208c-8cee-4a49-9ffc-abaa8d2de0f4)
 ![image](https://github.com/user-attachments/assets/2ca00d53-9238-4e81-a584-5fd1cd0bfa1f)
+## Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
+I created an Azure Data Factory (ADF) pipeline to log pipeline execution details into an Azure SQL Database. First, I designed a table and a stored procedure in Azure SQL DB. Then, in ADF, I built a pipeline that uses the Stored Procedure activity. Whenever this activity executes, the stored procedure inserts execution log data into the SQL table. The pipeline passes metadata such as pipeline name, run ID, trigger name, and execution time dynamically to the stored procedure through the activity’s parameter settings.
 
+## 6.1 pipeline 
+<img width="917" height="227" alt="image" src="https://github.com/user-attachments/assets/7bac76df-6613-4212-a34d-6c063403e8a6" />
 
+## 6.2 Stored Procedure Activity Settings
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/01d95b5b-56c2-451a-b374-961fa84fc6f1" />
+
+## 6.3 Pipeline Execution 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/315f0a40-6e1b-488a-b70f-cfe41bf2e4f5" />
+
+## 6.4 Azure SQL Table and Stored Procedure Setup
+```sql
+/* Create table */
 CREATE TABLE [pipeline_logs].[pipeline_executions](
     data_factory_name varchar(50),
-	pipeline_name varchar(50),
-	trigger_name varchar(50),
-	run_id varchar(50),
-	trigger_time DateTime
-)
+    pipeline_name varchar(50),
+    trigger_name varchar(50),
+    run_id varchar(50),
+    trigger_time DateTime
+);
 
+/* Create stored procedure */
 CREATE PROCEDURE [pipeline_logs].[sp_insert_pipline_log](
     @data_factory_name varchar(50),
-	@pipeline_name varchar(50),
-	@trigger_name varchar(50),
-	@run_id varchar(50),
-	@trigger_time DateTime
+    @pipeline_name varchar(50),
+    @trigger_name varchar(50),
+    @run_id varchar(50),
+    @trigger_time DateTime
 )
 AS
 BEGIN
     INSERT INTO [pipeline_logs].[pipeline_executions] VALUES(
-	    @data_factory_name,
-		@pipeline_name,
-		@trigger_name,
-		@run_id,
-		@trigger_time
-	)
-END
+        @data_factory_name,
+        @pipeline_name,
+        @trigger_name,
+        @run_id,
+        @trigger_time
+    );
+END;
+```
+## 6.5 SQL table before pipeline execution
+<img width="1165" height="600" alt="image" src="https://github.com/user-attachments/assets/01b67736-41e5-4972-be9a-59d591ede9c8" />
 
+## 6.6 SQL table after pipeline execution
+<img width="1167" height="591" alt="image" src="https://github.com/user-attachments/assets/d6d20cf2-6699-46c2-b1bf-5cd0d60c6b74" />
 
 
 
