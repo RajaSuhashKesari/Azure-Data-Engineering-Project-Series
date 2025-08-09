@@ -5,6 +5,7 @@
     |  -> Project #3 :- Delete Files Older Than 30 Days
     |  -> Project #4 :- Incremental File Copy Based on Last_Modified_Date.
     |  -> Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
+    |  -> Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
 ## Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
