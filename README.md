@@ -6,6 +6,7 @@
     |  -> Project #4 :- Incremental File Copy Based on Last_Modified_Date.
     |  -> Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
     |  -> Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
+    |  -> Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
 ## Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
@@ -132,6 +133,64 @@ END;
 
 ## 6.6 SQL table after pipeline execution
 <img width="1167" height="591" alt="image" src="https://github.com/user-attachments/assets/d6d20cf2-6699-46c2-b1bf-5cd0d60c6b74" />
+
+## Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
+
+This project demonstrates how to remove duplicate employee records stored in **Azure Data Lake Storage Gen2** using **Azure Data Factory (ADF) Mapping Data Flow**, while retaining only the **first occurrence** of each record.
+
+---
+
+## 🚀 Pipeline Overview
+
+### **1. Data Flow Activity**
+- The ADF pipeline uses a **Data Flow Activity** to invoke a Mapping Data Flow that performs the deduplication process.
+
+### **2. Data Sources**
+- Two separate source datasets from **ADLS Gen2**.
+- Both datasets share the same schema but contain some duplicate `employee_id` values.
+
+### **3. Union Transformation**
+- Combines data from both sources into a single unified dataset.
+
+### **4. Aggregate Transformation**
+- **Group By:** `employee_id`
+- **Aggregation:**
+  - Utilized **Column Pattern** to dynamically select all columns.
+  - **Condition in Column Pattern:** Matches all columns in the dataset.
+  - **Aggregation Expression:** `first($$)` — ensures only the first occurrence of each duplicate record is kept.
+
+### **5. Sort Transformation**
+- Sorts the resulting data by `employee_id` for cleaner, ordered output.
+
+### **6. Sink**
+- Writes the final **deduplicated and sorted dataset** into a CSV file in **ADLS Gen2**.
+
+---
+
+## 🛠 Key Features
+- **Schema Drift Support:** Automatically adapts to schema changes without manual column mapping.
+- **Efficient Deduplication:** Keeps only the first occurrence of duplicates using a dynamic aggregation pattern.
+- **Organized Output:** Sorted results for better readability.
+
+---
+
+## 7.1 Pipeline Diagram
+<img width="1157" height="762" alt="image" src="https://github.com/user-attachments/assets/e393f5d8-8c7d-48ed-bb95-745786c3263b" />
+
+## 7.2 Dataflow Diagram
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/8cb7ffc9-5479-4b4a-bf8b-7150381b5d8c" />
+
+## 7.3 Input Data
+### 7.3.1 employees_file1.csv
+<img width="432" height="308" alt="image" src="https://github.com/user-attachments/assets/cb12e484-357b-4796-8076-dc6230ebfbb9" />
+
+### 7.3.1 employees_file2.csv
+<img width="422" height="317" alt="image" src="https://github.com/user-attachments/assets/dfb21d4e-6a31-4515-a9d4-77bbc6cddb7e" />
+
+## 7.3 Output Data
+<img width="416" height="382" alt="image" src="https://github.com/user-attachments/assets/8805fb20-c519-4b02-a158-a95db7a4afa5" />
+
+
 
 
 
