@@ -7,6 +7,7 @@
     |  -> Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
     |  -> Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
     |  -> Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
+    |  -> Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
 ## Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
@@ -23,6 +24,9 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 ![image](https://github.com/user-attachments/assets/8e6331d5-da86-4fc4-8ff9-c4cbdcf81bde)
 ### 1.5.2 Bad rows
 ![image](https://github.com/user-attachments/assets/4502825f-c74f-48db-854c-48494139153b)
+
+---
+
 ## Project #2 :- Copy Multiple Files CSV Files of Employees using Wildcard file path Method
 ## 2.1 pipeline image
 ![image](https://github.com/user-attachments/assets/933ae6e6-c18d-44eb-a4e9-41c01174dd41)
@@ -34,6 +38,9 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 ## 2.4 Dataset - output folder
 ![image](https://github.com/user-attachments/assets/3fe1be1a-b058-4fc7-8482-c809ae91c2ab)
 ![image](https://github.com/user-attachments/assets/d0024c3a-66ce-4c5e-bcaa-9c628c7ce904)
+
+---
+
 ## Project #3 :- Delete files older than 30 days
 ## 3.1 pipeline image
 ![image](https://github.com/user-attachments/assets/084a3fb5-fb80-4408-9c54-f05343cf5bdd)
@@ -47,6 +54,9 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 ![image](https://github.com/user-attachments/assets/a0d3290c-2b1b-4f12-be57-03bbfe3b230e)
 ## 3.6 Log file to track which files are deleted.
 ![image](https://github.com/user-attachments/assets/567b4f85-ea96-4258-8ffe-e34412f45ef1)
+
+---
+
 ## Project #4: Incremental File Copy Based on Last_Modified_Date
 This project demonstrates how to incrementally copy newly added or modified files from one ADLS Gen2 folder to another using Azure Data Factory. The pipeline intelligently filters files based on their last modified timestamp.
 ## 4.1 Pipeline & Copy Data Activity Configuration
@@ -68,6 +78,9 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 ![image](https://github.com/user-attachments/assets/b45b8ea3-09a9-425c-bc2d-1906222309b5)
 ### 4.6.2 After Execution
 ![image](https://github.com/user-attachments/assets/61df00a7-4e57-4f8b-9ded-90c99c733157)
+
+---
+
 ## Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
 ## 5.1 pipeline : Dataflow Activity
 ![image](https://github.com/user-attachments/assets/8d7dd342-c4d8-48c9-ad2f-3f9d48d1915c)
@@ -86,6 +99,9 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 ### 5.5.2 Parsed fixed length text file to CSV
 ![image](https://github.com/user-attachments/assets/8e52208c-8cee-4a49-9ffc-abaa8d2de0f4)
 ![image](https://github.com/user-attachments/assets/2ca00d53-9238-4e81-a584-5fd1cd0bfa1f)
+
+---
+
 ## Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
 I created an Azure Data Factory (ADF) pipeline to log pipeline execution details into an Azure SQL Database. First, I designed a table and a stored procedure in Azure SQL DB. Then, in ADF, I built a pipeline that uses the Stored Procedure activity. Whenever this activity executes, the stored procedure inserts execution log data into the SQL table. The pipeline passes metadata such as pipeline name, run ID, trigger name, and execution time dynamically to the stored procedure through the activity’s parameter settings.
 
@@ -190,6 +206,105 @@ This project demonstrates how to remove duplicate employee records stored in **A
 ## 7.3 Output Data
 <img width="416" height="382" alt="image" src="https://github.com/user-attachments/assets/8805fb20-c519-4b02-a158-a95db7a4afa5" />
 
+## Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
+## **Overview**
+This project demonstrates how to incrementally load new employee data into an existing employee dataset stored in **Azure Data Lake Storage Gen2** using **Azure Data Factory Mapping Data Flow**.
+
+### **The Challenge**
+- **Final Employees dataset** already contains `employee_id` values.
+- **New Employees dataset** does **not** contain `employee_id`.
+- Requirement: Append new employees with **incremental IDs** without overwriting or duplicating existing IDs.
+
+---
+
+## **Pipeline Flow**
+
+### **Data Flow Activity**
+- The pipeline calls a **Mapping Data Flow** to handle **ID assignment** and **data merging**.
+
+---
+
+## **Mapping Data Flow Steps**
+
+### **1. Sources**
+- **Source 1**: Final Employees CSV (**with** `employee_id`)
+- **Source 2**: New Employees CSV (**without** `employee_id`)
+
+---
+
+### **2. Find Maximum Existing ID**
+- **Aggregate Transformation** on Final Employees dataset:
+  - **Group By**: *(none)* → to get a single aggregated result.
+  - **Aggregate Column**: `max(employee_id)` → renamed as `max_id`.
+
+---
+
+### **3. Generate Dummy IDs for New Employees**
+- **Surrogate Key Transformation** on New Employees dataset:
+  - Creates a new column `dummy_emp_id` with sequential values: `1, 2, 3, ...`
+
+---
+
+### **4. Cross Join for ID Increment**
+- **Cross Join** between:
+  - `max_id` (from aggregate)
+  - `dummy_emp_id` (from new employee data)
+- Purpose: Allows each new employee to know the maximum existing ID.
+
+---
+
+### **5. Create Incremental Employee ID**
+- **Derived Column Transformation**:
+  - New column:  
+    ```
+    employee_id = max_id + dummy_emp_id
+    ```
+  - Assigns unique incremental IDs to new employees.
+
+---
+
+### **6. Remove Unwanted Columns**
+- **Select Transformation**:
+  - Drop: `max_id`, `dummy_emp_id`
+  - Keep: `employee_id`, `name`, `department`, `salary`
+
+---
+
+### **7. Merge Old and New Data**
+- **Union Transformation**:
+  - Combine Final Employees dataset with New Employees dataset (now with IDs).
+
+---
+
+### **8. Sort Data**
+- **Sort Transformation**:
+  - Sort by `employee_id` for a clean, ordered output.
+
+---
+
+### **9. Write Back to ADLS Gen2**
+- **Sink**:
+  - Write the merged dataset back to the **same file** containing the original Final Employees data (**overwrite with updated data**).
+
+---
+
+## 8.1 Pipeline :
+<img width="1226" height="897" alt="image" src="https://github.com/user-attachments/assets/511bd535-ca1a-4803-8c90-9ad8f25f683c" />
+
+## 8.2 Mapping DataFlow
+<img width="1867" height="337" alt="image" src="https://github.com/user-attachments/assets/1a9c1300-07de-461e-b052-cc50ca988cb1" />
+
+## 8.3 Input
+### 8.3.1 New Employees
+<img width="320" height="213" alt="image" src="https://github.com/user-attachments/assets/565b3cbf-f28b-4789-aa9a-205c2ffda335" />
+
+### 8.3.2 Final_Employees
+<img width="471" height="260" alt="image" src="https://github.com/user-attachments/assets/4d78c759-20c2-46b3-8fdf-4fd0a1a777a5" />
+
+## 8.4  Final Output
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2b3ec29e-9ef0-4213-80ae-9351ea06c1e9" />
+
+---
 
 
 
