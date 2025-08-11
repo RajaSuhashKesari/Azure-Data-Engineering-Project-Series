@@ -8,7 +8,8 @@
     |  -> Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
     |  -> Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
     |  -> Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
-## Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
+    |  -> Project #9 :- Calculate Running Total of Purchase for Each Customer
+# Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
 ## 1.1 pipeline
@@ -27,7 +28,7 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 
 ---
 
-## Project #2 :- Copy Multiple Files CSV Files of Employees using Wildcard file path Method
+# Project #2 :- Copy Multiple Files CSV Files of Employees using Wildcard file path Method
 ## 2.1 pipeline image
 ![image](https://github.com/user-attachments/assets/933ae6e6-c18d-44eb-a4e9-41c01174dd41)
 ## 2.2 Exection of pipeline
@@ -41,7 +42,7 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 
 ---
 
-## Project #3 :- Delete files older than 30 days
+# Project #3 :- Delete files older than 30 days
 ## 3.1 pipeline image
 ![image](https://github.com/user-attachments/assets/084a3fb5-fb80-4408-9c54-f05343cf5bdd)
 ## 3.2 Dataset
@@ -57,7 +58,7 @@ Finally i stored the good and bad rows seperatley in the seperate table in the A
 
 ---
 
-## Project #4: Incremental File Copy Based on Last_Modified_Date
+# Project #4: Incremental File Copy Based on Last_Modified_Date
 This project demonstrates how to incrementally copy newly added or modified files from one ADLS Gen2 folder to another using Azure Data Factory. The pipeline intelligently filters files based on their last modified timestamp.
 ## 4.1 Pipeline & Copy Data Activity Configuration
 ![image](https://github.com/user-attachments/assets/c3c9aaee-3fa0-4638-8bc1-e3b032f59420)
@@ -81,7 +82,7 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 
 ---
 
-## Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
+# Project #5 :- Process Fixed Length Text to CSV using ADF Mapping Dataflows
 ## 5.1 pipeline : Dataflow Activity
 ![image](https://github.com/user-attachments/assets/8d7dd342-c4d8-48c9-ad2f-3f9d48d1915c)
 ## 5.2 Dataflow: DF Parse Fixed Length employee
@@ -102,7 +103,7 @@ A Scheduled Trigger is configured to automatically execute the pipeline once dai
 
 ---
 
-## Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
+# Project #6 :- Log Pipeline Executions to SQL Table using Azure Data Factory
 I created an Azure Data Factory (ADF) pipeline to log pipeline execution details into an Azure SQL Database. First, I designed a table and a stored procedure in Azure SQL DB. Then, in ADF, I built a pipeline that uses the Stored Procedure activity. Whenever this activity executes, the stored procedure inserts execution log data into the SQL table. The pipeline passes metadata such as pipeline name, run ID, trigger name, and execution time dynamically to the stored procedure through the activity’s parameter settings.
 
 ## 6.1 pipeline 
@@ -150,7 +151,7 @@ END;
 ## 6.6 SQL table after pipeline execution
 <img width="1167" height="591" alt="image" src="https://github.com/user-attachments/assets/d6d20cf2-6699-46c2-b1bf-5cd0d60c6b74" />
 
-## Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
+# Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
 
 This project demonstrates how to remove duplicate employee records stored in **Azure Data Lake Storage Gen2** using **Azure Data Factory (ADF) Mapping Data Flow**, while retaining only the **first occurrence** of each record.
 
@@ -206,7 +207,7 @@ This project demonstrates how to remove duplicate employee records stored in **A
 ## 7.3 Output Data
 <img width="416" height="382" alt="image" src="https://github.com/user-attachments/assets/8805fb20-c519-4b02-a158-a95db7a4afa5" />
 
-## Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
+# Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
 ## **Overview**
 This project demonstrates how to incrementally load new employee data into an existing employee dataset stored in **Azure Data Lake Storage Gen2** using **Azure Data Factory Mapping Data Flow**.
 
@@ -305,8 +306,72 @@ This project demonstrates how to incrementally load new employee data into an ex
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2b3ec29e-9ef0-4213-80ae-9351ea06c1e9" />
 
 ---
+# Project #9 :- Calculate Running Total of Purchase for Each Customer
+## 9.1 Overview
+This pipeline calculates the running total of purchases for each customer using Azure Data Factory's Mapping Data Flow. The solution:
+1. Processed Purchase data from source systems
+2. Applies window transformation for cumulative sums3
+3. Stores processed results in ADLS Gen2
+## 9.2 Implementation Details
+### 9.2.1 Data Flow Image
+<img width="1832" height="388" alt="image" src="https://github.com/user-attachments/assets/81831d71-f9ea-488d-a3ff-026ada0c18b9" />
 
+### 9.2.2 Window Transformation Configuration
+Key Settings:
+#### Over Clause: CustomerID (Partitioning)
+<img width="1762" height="775" alt="image" src="https://github.com/user-attachments/assets/4ecddb4a-95fe-48b4-9fd9-aa713875cf85" />
 
+#### Sort Clause: Date ASC (Ordering)
+<img width="1185" height="229" alt="image" src="https://github.com/user-attachments/assets/5a7e8751-d302-4184-8ac9-64460516d2d3" />
+
+### Window Column:
+<img width="1170" height="298" alt="image" src="https://github.com/user-attachments/assets/7ee3eba0-e154-47c4-8993-1dd34ec90c41" />
+
+## 9.3 Input-Output of Dataflow
+### 9.3.1 Source Data
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1a858f37-33bf-4a71-89d3-2a31c982b372" />
+
+### 9.3.2 Processed Output
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d8451410-70f9-4e77-823c-0c8d0d7f254b" />
+
+### 9.4 Final Conclusion
+Based on the above output and below calculation all out produced by **Window Transformation** is correct
+##### Customer C001:
+```
+2025-08-01: 120.50 (Running Total: 120.50)
+2025-08-02: 80.00 (120.50 + 80.00 = 200.50)
+2025-08-04: 45.25 (200.50 + 45.25 = 245.75)
+2025-08-05: 150.00 (245.75 + 150.00 = 395.75)
+2025-08-06: 50.00 (395.75 + 50.00 = 445.75)
+2025-08-09: 200.00 (445.75 + 200.00 = 645.75)
+```
+C001 running totals are correct.
+
+##### Customer C002:
+```
+2025-08-02: 75.00 (Running Total: 75.00)
+2025-08-04: 150.75 (75.00 + 150.75 = 225.75)
+2025-08-07: 95.00 (225.75 + 95.00 = 320.75)
+2025-08-10: 250.00 (320.75 + 250.00 = 570.75)
+```
+C002 running totals are correct.
+
+##### Customer C003:
+```
+2025-08-03: 220.00 (Running Total: 220.00)
+2025-08-05: 180.50 (220.00 + 180.50 = 400.50)
+2025-08-08: 120.00 (400.50 + 120.00 = 520.50)
+2025-08-09: 75.50 (520.50 + 75.50 = 596.00)
+```
+C003 running totals are correct.
+
+#### Final Verification:
+My dataflow output correctly shows:
+Each customer's purchases in chronological order,
+The running totals accumulate properly within each customer group,
+No mixing of totals between different customers.
+
+---
 
 
 
