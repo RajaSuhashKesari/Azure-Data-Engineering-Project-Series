@@ -9,6 +9,7 @@
     |  -> Project #7 :- Remove Duplicate Rows using Mapping Data Flows in Azure Data Factory
     |  -> Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
     |  -> Project #9 :- Calculate Running Total of Purchase for Each Customer
+    |  -> Project #10 :- Log Pipeline Executions to CSV File Using Azure Data Factory
 # Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
@@ -372,11 +373,84 @@ The running totals accumulate properly within each customer group,
 No mixing of totals between different customers.
 
 ---
+# Project #10 :- Log Pipeline Executions to CSV File Using Azure Data Factory
+📌 Project Overview
 
+This project automates the logging of Azure Data Factory (ADF) pipeline runs into CSV files stored in Azure Data Lake Storage Gen2 (ADLS Gen2).
 
+The pipeline is designed to capture all pipeline execution details from the previous day and store them in a structured format for auditing, monitoring, and analysis.
 
+Each day, the pipeline produces a CSV file named with yesterday’s date, containing all the triggered pipelines within the defined time window.
 
+## Requirments
+1. Linked Services
+   - Rest Linked Service
+   - ADLS Gen2 Linked Service
+2. Datasets
+   - Rest Dataset
+   - Delimited Text ADLS Gen2
+3. Managed Identity
+   - Enable Managed Identity of the same data factory that you are working with.
+   - Go to role assignments and add "Data Factory Contributer" or "Data Factory Reader" role to the same Data Factory
+4. Triggers
+   - Create a schedule trigger which will trigger this pipliine daily at 12:00 AM
+5. Pipeline to extract pipeline logs and put it in csv file
+## 10.1 Pipeline image :
+<img width="552" height="296" alt="image" src="https://github.com/user-attachments/assets/49a231be-5d23-4339-bdc4-0ed4ec6e3796" />
 
+### 10.1.1 Copy Data Activty - Source :
+<img width="1397" height="682" alt="image" src="https://github.com/user-attachments/assets/1d7ad00f-7d17-4467-a59a-ea4f41da4c87" />
 
+**Request Body:-**
+```
+@concat(
+  '{ "lastUpdatedAfter": "', formatDateTime(addDays(addMinutes(addHours(utcNow(), 5), 30), -1), 'yyyy-MM-ddT00:00:00Z'),
+  '", "lastUpdatedBefore": "', formatDateTime(addDays(addMinutes(addHours(utcNow(), 5), 30), -1), 'yyyy-MM-ddT23:59:59'),
+  '" }'
+)
+```
+### 10.1.2 Copy Data Activty - Sink :
+<img width="1392" height="682" alt="image" src="https://github.com/user-attachments/assets/68f65e8c-b6c6-47ff-8aaf-fee37a054b5b" />
 
+Give file name directly or you can create paramter for CSV dataset and you can the file name dynamically at in **Copy Activity - Sink**
+**File Name:-**
+```
+@concat(
+    formatDateTime(
+        addDays(
+            addMinutes(addHours(utcNow(), 5), 30),
+            -1
+        ),
+        'yyyy-MM-dd'
+    ),
+    '.csv'
+)
+```
+### 10.1.3 Copy Data Activty - Mappings :
+**Don't forget to use refernce Collection**
+**Make sure all data type finally in string if not you will face error**
+<img width="1141" height="958" alt="image" src="https://github.com/user-attachments/assets/dc51c2e8-9770-4eed-acc4-a38110d3b714" />
+
+## 10.2 REST Linked Service - Configurations :-
+<img width="712" height="1033" alt="image" src="https://github.com/user-attachments/assets/0b371f76-8e41-4419-83b3-90f9e029ecf9" />
+
+**Base Url:**
+```
+https://management.azure.com/subscriptions/<PUT- YOUR-SUBSCRPTION-ID-HERE>/resourceGroups/<PUT-YOUR-RESOURCE-GROUP-NAME-HERE>/providers/Microsoft.DataFactory/factories/<PUT-DATA-FACTORY-NAME-HERE>
+```
+**Microsoft Entra ID resource:-**
+```
+https://management.azure.com/
+```
+## 10.3 Trigger - Configuration:-
+<img width="710" height="1036" alt="image" src="https://github.com/user-attachments/assets/eb02ed25-fc33-41b7-827f-075ad1433999" />
+
+## 10.4 Final Output:-
+### CSV File generated in the ADLS Gen2 with yesterday date
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a5b4335a-6ce0-4794-8d3a-97a780ce56bf" />
+
+### CSV File Data
+<img width="1405" height="902" alt="image" src="https://github.com/user-attachments/assets/2fce3541-5c89-4408-b7ad-5796e52cfd59" />
+
+---
 
