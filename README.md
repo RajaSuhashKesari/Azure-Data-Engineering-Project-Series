@@ -10,6 +10,8 @@
     |  -> Project #8 :- Add new Employees to File By Incrementing Key using Mapping Data Flow in ADF
     |  -> Project #9 :- Calculate Running Total of Purchase for Each Customer
     |  -> Project #10 :- Log Pipeline Executions to CSV File Using Azure Data Factory
+    |  -> Project #11 :- Implement SCD Type - 1 When Source is CSV and Sink is SQL
+    |  -> Project #12 :- Implement SCD Type - 1 When Source is CSV and Sink is CSV
 # Project #1 :- Handle Error Rows in Data Factory Mapping Data Flows
 In this project i have built an pipeline in Azure Data Factory which is going to extract multiple employee csv files from the ADLS Gen2 and used Data flow transformations to seperate good and bad data from the each csv file.
 Finally i stored the good and bad rows seperatley in the seperate table in the Azure SQL Database.
