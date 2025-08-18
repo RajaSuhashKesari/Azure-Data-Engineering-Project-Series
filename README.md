@@ -455,4 +455,91 @@ https://management.azure.com/
 <img width="1405" height="902" alt="image" src="https://github.com/user-attachments/assets/2fce3541-5c89-4408-b7ad-5796e52cfd59" />
 
 ---
+# Project #11 :- Implement SCD Type - 1 When Source is CSV and Sink is SQL DB
+
+📌 Project Overview :-
+
+In this project, employee data from a CSV file stored in ADLS Gen2 is ingested into an Azure SQL Database dimension table. Using ADF Mapping Data Flows with Upsert, the pipeline performs SCD Type 1 updates — ensuring that existing employee records are overwritten with the latest values (e.g., Salary, City changes), while new employees are inserted. This guarantees the dimension table always holds the most recent employee information without keeping historical data.
+
+## Requirments
+1. Linked Services
+   - Azure SQL Database Linked Service
+   - ADLS Gen2 Linked Service
+2. Datasets
+   - Azure SQL Table Dataset
+   - Delimited Text ADLS Gen2
+3. A pipeline which is going call below Mapping Data Flow using Dataflow Activity
+4. A Mapping Dataflow which will extract employees csv and load it into azure sql table by performaing SCD Type 1
+
+## 11.1 Pipeline image :
+<img width="1157" height="730" alt="image" src="https://github.com/user-attachments/assets/4d130696-cb6e-4fb3-937b-921899ff8509" />
+
+## 11.2 Mapping Dataflow :-
+<img width="1766" height="302" alt="image" src="https://github.com/user-attachments/assets/932b92f2-60c7-47a6-86f7-e7220c9d5ef5" />
+
+### 11.2.1 Mapping Dataflow - Source Settings :-
+My data in sql table some of the columns are integer and decimal type it will cause error if we don't change the data type in projection.
+<img width="1823" height="915" alt="image" src="https://github.com/user-attachments/assets/5f80df80-3437-4059-8d82-74bd8bad3f58" />
+
+### 11.2.2 Mapping Dataflow - Alter Row Transformation :-
+<img width="1823" height="881" alt="image" src="https://github.com/user-attachments/assets/a52b46b9-e023-450b-8a7f-545a2e58d646" />
+
+### 11.2.3 Mapping Dataflow - Sink:-
+<img width="1822" height="905" alt="image" src="https://github.com/user-attachments/assets/a8f9b0c8-99a1-4aaa-a4c8-89ea029a9958" />
+
+## 11.3 Datasets :-
+### 11.3.1 ADF Dataset - DS_new_employees(csv):- 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/10a08cc1-9ae8-4ac6-9b5c-f4fbb1896bc6" />
+
+**Source Dataset**
+```
+EmployeeID,Name,Department,Salary,City
+101,John Doe,IT,65000,New York
+102,Alice Smith,HR,60000,Dallas
+104,David Johnson,IT,72000,Chicago
+105,Eva Brown,Finance,68000,Boston
+```
+### 11.3.2 ADF Dataset - DS_Emp_SQL_Table(Azure SQL Database):-
+<img width="1440" height="657" alt="image" src="https://github.com/user-attachments/assets/fbd8d7dd-9732-4ee2-889b-2ad01edae38c" />
+
+**Sink Side Data**
+```
+CREATE TABLE dbo.DimEmployee (
+    EmployeeID INT PRIMARY KEY,
+    Name NVARCHAR(100),
+    Department NVARCHAR(50),
+    Salary DECIMAL(10,2),
+    City NVARCHAR(50)
+);
+
+INSERT INTO dbo.DimEmployee (EmployeeID, Name, Department, Salary, City)
+VALUES
+(101, 'John Doe', 'IT', 60000, 'Boston'),
+(102, 'Alice Smith', 'HR', 55000, 'Dallas'),
+(103, 'Bob Miller', 'Finance', 58000, 'Seattle');
+```
+## 11.4 Final Outcome:
+### 11.4.1 Before Execution:
+#### 11.4.1.1 Source Data:
+<img width="577" height="201" alt="image" src="https://github.com/user-attachments/assets/08806697-6f84-499a-9096-5b71805f124c" />
+
+#### 11.4.1.2 DimEmployee Table before applying scd type 1:
+<img width="1536" height="747" alt="Screenshot 2025-08-18 134647" src="https://github.com/user-attachments/assets/926b2f6e-44cc-44bc-8fe5-6f57c44f66f6" />
+
+#### 11.4.1.3 Expected output:-
+```
+| EmployeeID | Name          | Department | Salary | City     |                         |
+| ---------- | ------------- | ---------- | ------ | -------- | ----------------------- |
+| 101        | John Doe      | IT         | 65000  | New York | ✅ Updated Salary + City |
+| 102        | Alice Smith   | HR         | 60000  | Dallas   | ✅ Updated Salary        |
+| 103        | Bob Miller    | Finance    | 58000  | Seattle  | ✅ No Change             |
+| 104        | David Johnson | IT         | 72000  | Chicago  | ✅ Inserted              |
+| 105        | Eva Brown     | Finance    | 68000  | Boston   | ✅ Inserted              |
+```
+### 11.4.2 DimEmployee Table After Execution
+<img width="1539" height="754" alt="Screenshot 2025-08-18 134942" src="https://github.com/user-attachments/assets/7bcb75fe-2ac1-48da-a63b-5ba8f770c568" />
+
+Finally i have successfully created a pipeline in ADF using Mapping Data Flow to implement Slowly Changing Dimesions Type -1.
+
+---
 
