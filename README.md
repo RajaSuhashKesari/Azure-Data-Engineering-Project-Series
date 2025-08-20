@@ -542,4 +542,91 @@ VALUES
 Finally i have successfully created a pipeline in ADF using Mapping Data Flow to implement Slowly Changing Dimesions Type -1.
 
 ---
+# Project #12 :- Implement SCD Type - 1 When Source is CSV and Sink is CSV
+📂 Azure Data Factory – SCD Type 1 Implementation (CSV → CSV)
+## 📌 Project Overview
+This project demonstrates how to implement Slowly Changing Dimension (SCD) Type 1 in Azure Data Factory Mapping Data Flow where both the source and sink are CSV files stored in Azure Data Lake / Blob.
+
+SCD Type 1 ensures that:
+1. New records are inserted into the dimension.
+2. Changed records overwrite the old values (no history preserved).
+3. Unchanged records remain as is.
+
+## Requirments
+1. Linked Services
+   - ADLS Gen2 Linked Service
+2. Datasets
+   - Delimited Text for Source csv file
+   - Delimited Text for Sink csv file
+4. A pipeline which is going call below Mapping Data Flow using Dataflow Activity
+5. A Mapping Dataflow which will extract new_customers and dimension customer and perform SCD Type 1 and load to sink location.
+
+## 12.1 pipeline :-
+<img width="1157" height="715" alt="image" src="https://github.com/user-attachments/assets/796637c6-4767-45ab-9c3f-d06bdf365e9e" />
+
+## 12.2 Mapping Data Flow :-
+<img width="1911" height="871" alt="image" src="https://github.com/user-attachments/assets/39995375-fa8b-40f4-ba5a-0456ad53ab35" />
+
+## 🏗️ Architecture / Data Flow Design
+
+**Steps inside Data Flow:**
+
+1. **Source**
+   - `DS_customer_source_csv` → Incoming customer data (latest)
+   <img width="1177" height="661" alt="image" src="https://github.com/user-attachments/assets/3e979b5b-8a11-41f6-84f5-d0395f625133" />
+
+   - `DS_customer_dimension_csv` → Existing customer dimension (historical)
+    <img width="1182" height="645" alt="image" src="https://github.com/user-attachments/assets/87928b78-2cbb-4aba-b2f3-d186cbdb116d" />
+    
+2. **Join**
+   - Full outer join on `CustomerID`
+    <img width="1158" height="642" alt="image" src="https://github.com/user-attachments/assets/e11c04ed-c282-4711-a9ac-45f12cb2c187" />
+
+3. **Split**
+   <img width="1432" height="675" alt="image" src="https://github.com/user-attachments/assets/e13b6552-3208-4236-9d61-daa55ff7db03" />
+
+   - **Updated Records** → If `Name`, `Email`, `City`, or `Phone` changed
+     ```
+     !equals(CustomerSource@Name, CustomerDimension@Name)|| !equals(CustomerSource@Email, CustomerDimension@Email)|| !equals(CustomerSource@City, CustomerDimension@City)|| !equals(CustomerSource@Phone, CustomerDimension@Phone)
+     ```
+   - **New Records** → If `CustomerID` not found in dimension
+     ```
+     isNull(CustomerDimension@CustomerID)
+     ```
+   - **No Changes** → Remaining records
+     ```1 == 1
+     ```
+
+5. **Select**
+   - In UpdateRecords delete last five columns remaining appear like this
+   <img width="1918" height="756" alt="image" src="https://github.com/user-attachments/assets/3b86ea19-a5fc-45e3-a4e1-676291bf2a63" />
+   
+   - In NewRecords delete last five columns remaining appear like this
+   <img width="1913" height="756" alt="image" src="https://github.com/user-attachments/assets/999135a7-1563-4867-a0da-538c899b03bb" />
+   
+    - In NoChanges delete first five columns then it will appear like this
+   <img width="1918" height="745" alt="image" src="https://github.com/user-attachments/assets/0dd0af96-6a30-4dde-b2e2-2fe9cbb4072b" />
+
+7. **Union**
+   - Combine updated, new, and unchanged records
+    <img width="865" height="517" alt="image" src="https://github.com/user-attachments/assets/4f6cd50b-4227-4e47-95f9-a037ad74022e" />
+
+
+8. **Sort**
+   - Sort by `CustomerID` for cleaner output
+    <img width="1382" height="551" alt="image" src="https://github.com/user-attachments/assets/eaaf8119-cc6a-476b-9cd4-e321db09ef04" />
+
+
+9. **Sink**
+   - Write results back to `DS_customer_dimension_csv` (overwrites existing file)
+   <img width="1183" height="648" alt="image" src="https://github.com/user-attachments/assets/93cbbc17-fd4f-49d6-aa81-6681fc7fe414" />
+
+   <img width="1000" height="273" alt="image" src="https://github.com/user-attachments/assets/ed359ad0-f070-4859-ad37-aca1bc25baee" />
+
+## 12.3 Datasets
+### 12.3.1 Datasets - DS_customer_source_csv
+<img width="1076" height="717" alt="image" src="https://github.com/user-attachments/assets/fea4191a-e0a6-4ff0-86c7-c728694f38f3" />
+
+### 12.3.2 Datasets - DS_customer_dimension_csv
+<img width="1087" height="673" alt="image" src="https://github.com/user-attachments/assets/28bee820-aa81-46d0-b9f8-a6dabab55963" />
 
