@@ -646,7 +646,7 @@ CustomerID,Name,Email,City,Phone
 ```
 ## 12.4 After Execution of Pipeline
 ### 📊 Final Expected Output (Customer Dimension after SCD Type 1)
-
+```
 | CustomerID | Name          | Email                 | City           | Phone       |
 |------------|---------------|-----------------------|----------------|-------------|
 | 101        | John Doe      | john.doe@email.com    | New York       | 1234567890  | <------- Updated
@@ -657,6 +657,7 @@ CustomerID,Name,Email,City,Phone
 | 106        | Sophia Davis  | sophia.d@email.com    | Seattle        | 3334445555  |
 | 107        | David Wilson  | david.w@email.com     | San Francisco  | 4445556666  | <------- New Record
 | 108        | Linda Taylor  | linda.t@email.com     | Boston         | 5556667777  | <------- New Record
+```
 
 ### 📊 Real Final Output (Customer Dimension after SCD Type 1)
 <img width="712" height="346" alt="image" src="https://github.com/user-attachments/assets/5b3388b9-08a1-4841-b6e6-67f91e487d0f" />
