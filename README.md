@@ -596,8 +596,7 @@ SCD Type 1 ensures that:
    - **No Changes** → Remaining records
      ```1 == 1
      ```
-
-5. **Select**
+4. **Select**
    - In UpdateRecords delete last five columns remaining appear like this
    <img width="1918" height="756" alt="image" src="https://github.com/user-attachments/assets/3b86ea19-a5fc-45e3-a4e1-676291bf2a63" />
    
@@ -607,17 +606,17 @@ SCD Type 1 ensures that:
     - In NoChanges delete first five columns then it will appear like this
    <img width="1918" height="745" alt="image" src="https://github.com/user-attachments/assets/0dd0af96-6a30-4dde-b2e2-2fe9cbb4072b" />
 
-7. **Union**
+5. **Union**
    - Combine updated, new, and unchanged records
     <img width="865" height="517" alt="image" src="https://github.com/user-attachments/assets/4f6cd50b-4227-4e47-95f9-a037ad74022e" />
 
 
-8. **Sort**
+6. **Sort**
    - Sort by `CustomerID` for cleaner output
     <img width="1382" height="551" alt="image" src="https://github.com/user-attachments/assets/eaaf8119-cc6a-476b-9cd4-e321db09ef04" />
 
 
-9. **Sink**
+7. **Sink**
    - Write results back to `DS_customer_dimension_csv` (overwrites existing file)
    <img width="1183" height="648" alt="image" src="https://github.com/user-attachments/assets/93cbbc17-fd4f-49d6-aa81-6681fc7fe414" />
 
@@ -625,8 +624,55 @@ SCD Type 1 ensures that:
 
 ## 12.3 Datasets
 ### 12.3.1 Datasets - DS_customer_source_csv
-<img width="1076" height="717" alt="image" src="https://github.com/user-attachments/assets/fea4191a-e0a6-4ff0-86c7-c728694f38f3" />
-
+```
+CustomerID,Name,Email,City,Phone
+101,John Doe,john.doe@email.com,New York,1234567890
+102,Alice Smith,alice.smith@email.com,Dallas,9876543210
+103,Bob Miller,bob.miller@email.com,Chicago,4567891230
+104,Eva Johnson,eva.j@email.com,Miami,6543219870
+105,Michael Brown,michael.b@email.com,Houston,2223334444
+106,Sophia Davis,sophia.d@email.com,Seattle,3334445555
+107,David Wilson,david.w@email.com,San Francisco,4445556666
+108,Linda Taylor,linda.t@email.com,Boston,5556667777
+```
 ### 12.3.2 Datasets - DS_customer_dimension_csv
-<img width="1087" height="673" alt="image" src="https://github.com/user-attachments/assets/28bee820-aa81-46d0-b9f8-a6dabab55963" />
+```
+CustomerID,Name,Email,City,Phone
+101,John Doe,john.doe@email.com,Los Angeles,1234567890
+102,Alice Smith,alice.smith@email.com,Dallas,9876543210
+103,Bob Miller,bob.miller@email.com,Chicago,1111111111
+104,Eva Johnson,eva.j@email.com,Orlando,6543219870
+105,Michael Brown,michael.b@email.com,Austin,2223339999
+```
+## 12.4 After Execution of Pipeline
+### 📊 Final Expected Output (Customer Dimension after SCD Type 1)
 
+| CustomerID | Name          | Email                 | City           | Phone       |
+|------------|---------------|-----------------------|----------------|-------------|
+| 101        | John Doe      | john.doe@email.com    | New York       | 1234567890  | <------- Updated
+| 102        | Alice Smith   | alice.smith@email.com | Dallas         | 9876543210  |
+| 103        | Bob Miller    | bob.miller@email.com  | Chicago        | 4567891230  | <------- Updated
+| 104        | Eva Johnson   | eva.j@email.com       | Miami          | 6543219870  | <------- New Record
+| 105        | Michael Brown | michael.b@email.com   | Houston        | 2223334444  |
+| 106        | Sophia Davis  | sophia.d@email.com    | Seattle        | 3334445555  |
+| 107        | David Wilson  | david.w@email.com     | San Francisco  | 4445556666  | <------- New Record
+| 108        | Linda Taylor  | linda.t@email.com     | Boston         | 5556667777  | <------- New Record
+
+### 📊 Real Final Output (Customer Dimension after SCD Type 1)
+<img width="712" height="346" alt="image" src="https://github.com/user-attachments/assets/5b3388b9-08a1-4841-b6e6-67f91e487d0f" />
+
+📝 Final Conclusion
+
+The SCD Type 1 implementation in Azure Data Factory Mapping Data Flows was successfully achieved.
+
+All new customer records were inserted correctly into the dimension table.
+
+All updated customer records had their values overwritten with the latest source data (no history tracking maintained).
+
+The final output table contains only the most recent version of each customer’s data.
+
+Validation confirmed that both new records and updated records flowed into the sink as expected.
+
+👉 This confirms that the pipeline fulfills the SCD Type 1 requirements, ensuring the dimension table always reflects the current state of customer data.
+
+---
